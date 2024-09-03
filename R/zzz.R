@@ -4,6 +4,8 @@
   if (!file.exists(data_path)) {
     message("Reference data have not been downloaded yet. Run completer_setup() to get the library ready to run.")
   } else {
+    message("Loading reference data...")
+    print(pkgname)
     load(data_path, envir = asNamespace(pkgname))
   }
 }
