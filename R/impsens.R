@@ -12,8 +12,8 @@ impsens <- function(imputation){
     filter(observed == 1)
     
   TP <- sum(filtered_imputation$observed == 1 & filtered_imputation$imputed == 1)
-  FN <- sum(filtered_imputation$observed == 1 & filtered_imputation$imputed == 0)
-  sensitivity <- TP / (TP + FN) # Proportion of positives that were correctly imputed
+  kFN <- sum(filtered_imputation$observed == 1 & filtered_imputation$imputed == 0)
+  sensitivity <- TP / (TP + kFN) # Proportion of positives that were correctly imputed
   
   return(sensitivity)
 }

@@ -116,25 +116,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   reference_tree <- keep.tip(reference_tree,tip=reference_traits$genome)
   
   # Calculate tip distances of user tree
-  message("   Calculating cophenetic distances among genomes...")
-  user_tree_distances <- ape::cophenetic.phylo(user_tree)
-  
-  # Find closest reference
-  closest_references <- c()
-  for(genome in focal_genomes){
-    closest_reference <- user_tree_distances[genome, ] %>% 
-      t() %>% t() %>% 
-      as.data.frame() %>% 
-      rownames_to_column(var="genome") %>% 
-      rename(distance=2) %>% 
-      filter(genome %in% reference_tree$tip.label) %>% 
-      arrange(distance) %>% 
-      slice(1) %>% 
-      mutate(genome=gsub("[^[:alnum:]_]", "", genome)) %>% 
-      pull(genome)
-    closest_references <- c(closest_references,closest_reference)
-  }
-  names(closest_references) <- focal_genomes
+  closest_references <- references_tree(focal_genomes,user_tree,reference_tree)
   
   # Distance to closest reference
   closest_reference_distances <- c()
