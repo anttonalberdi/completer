@@ -6,6 +6,7 @@
 #' @param span Number of neighboring genomes to be employed for calculating the imputed values.
 #' @param power Power value used when assigning weights to neighbor genomes (larger values assign larger weights to close neighbors)
 #' @param threshold Relative threshold to assign a presence.
+#' @param maxref Maximum number of references to keep in the user tree.
 #' @return A table of imputed values and imputation statistics.
 #' @import tidyverse
 #' @importFrom ape cophenetic.phylo keep.tip drop.tip
@@ -13,7 +14,7 @@
 #' completer(genome_traits,tree)
 #' @export
 
-completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0.90){
+completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0.90, maxref=15000){
   
   ######
   # Handle tree
@@ -45,6 +46,18 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   
   # Once focal genomes are identified, remove 'GB_' and 'RS_' prefixes
   user_tree$tip.label <- str_remove(user_tree$tip.label, "^GB_|^RS_")
+  
+  # Get reference genomes
+  reference_genomes <- scan("data/reference_genomes.txt", character(), quote = "", quiet=TRUE)
+  tip_labels_in_reference <- user_tree$tip.label[user_tree$tip.label %in% reference_genomes]
+  
+  # Reduce references to 10,000 or the value indicated in maxref
+  if(length(tip_labels_in_reference)>maxref){
+    tip_labels_in_reference <- sample(tip_labels_in_reference, maxref, replace = FALSE)
+  }
+  
+  # Prune user tree
+  user_tree <- keep.tip(user_tree,tip=c(focal_genomes,tip_labels_in_reference))
   
   ######
   # Handle traits
