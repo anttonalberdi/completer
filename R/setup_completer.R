@@ -4,9 +4,9 @@
 #' @export
 
 setup_completer <- function(){
-  message("Downloading a large data file. This will take a while...")
+  message("Downloading 5.6GB of reference data This will take a while...")
   data_path <- file.path(system.file("exdata", package = "completer"), "data.RData")
-  curl::curl_download("https://sid.erda.dk/share_redirect/H9VSThONVr/data.RData",data_path)
+  curl::curl_download("https://sid.erda.dk/share_redirect/H9VSThONVr/data.RData",data_path, quiet = FALSE)
   load(data_path, envir = .GlobalEnv)
 }
 
