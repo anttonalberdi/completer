@@ -4,7 +4,15 @@
 \alias{completer}
 \title{Imputes gene annotations to incomplete genomes based on phylogenetic signal.}
 \usage{
-completer(traits, tree, focal_genomes, span = 50, power = 3, threshold = 0.9)
+completer(
+  traits,
+  tree,
+  focal_genomes,
+  span = 50,
+  power = 3,
+  threshold = 0.9,
+  maxref = 15000
+)
 }
 \arguments{
 \item{traits}{Table containing presence/absence information of gene annotations (columns) across genomes (rows).}
@@ -18,6 +26,8 @@ completer(traits, tree, focal_genomes, span = 50, power = 3, threshold = 0.9)
 \item{power}{Power value used when assigning weights to neighbor genomes (larger values assign larger weights to close neighbors)}
 
 \item{threshold}{Relative threshold to assign a presence.}
+
+\item{maxref}{Maximum number of references to keep in the user tree.}
 }
 \value{
 A table of imputed values and imputation statistics.

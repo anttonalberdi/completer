@@ -9,6 +9,3 @@ setup_completer()
 \description{
 Prepare reference data for CompleteR
 }
-\examples{
-imputation(imputation)
-}
