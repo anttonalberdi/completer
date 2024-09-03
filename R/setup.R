@@ -4,12 +4,7 @@
 #' @export
 
 download_with_progress <- function(url, destfile) {
-    progress_handler <- function(downloaded, total) { cat(sprintf("\rDownloading: %.2f%%", (downloaded / total) * 100))}
-    curl::curl_download(
-      url,
-      destfile,
-      progress = progress_handler
-    )
+    curl::curl_download(url,destfile)
     cat("\nDownload complete!\n")
   }
   
