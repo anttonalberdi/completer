@@ -122,19 +122,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   closest_references <- references_tree(focal_genomes,user_tree,reference_tree)
   
   # Distance to closest reference
-  closest_reference_distances <- c()
-  for(genome in focal_genomes){
-    closest_reference_distance <- user_tree_distances[genome, ] %>% 
-      t() %>% t() %>% 
-      as.data.frame() %>% 
-      rownames_to_column(var="genome") %>% 
-      rename(distance=2) %>% 
-      filter(genome %in% reference_tree$tip.label) %>% 
-      arrange(distance) %>% 
-      slice(1) %>% 
-      pull(distance)
-    closest_reference_distances <- c(closest_reference_distances,closest_reference_distance)
-  }
+  closest_reference_distances <- distances_tree(focal_genomes,user_tree,reference_tree)
   
   # Collect distances to closest reference
   reference_distance <- tibble(genome=focal_genomes,reference=closest_references,distance=round(closest_reference_distances,2))
@@ -146,12 +134,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   # Calculate pairwise cophenetic distances between all tree tips
   # Required to apply span
   
-  if (!exists("reference_tree_distances")) {
-    message("   Loading tip distances...")
-    load("data/reference_tree.RData")
-  }
-  
-  tip_distances <- reference_tree_distances
+  tip_distances <- completer_distances
   
   # Generate a list of focal trees (one per focal genome)
   message("   Generating focal trees...")

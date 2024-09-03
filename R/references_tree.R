@@ -1,6 +1,14 @@
+#' Generate a vector of closest reference genomes
+#'
+#' @param focal_genomes Vector of focal genomes
+#' @param user_tree User reference tree
+#' @param reference_tree CompleteR reference tree
+#' @return A vector of closest reference genomes
+#' @export
+
 references_tree <- function(focal_genomes,user_tree,reference_tree){
   
-  message("   Calculating cophenetic distances among genomes...")
+  message("   Searching for closest reference genomes...")
   tree_distances <- ape::cophenetic.phylo(user_tree)
   
   focal_genomes %>%

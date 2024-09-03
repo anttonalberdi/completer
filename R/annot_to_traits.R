@@ -14,7 +14,7 @@ annot_to_traits <- function(annot, genome_index, kegg_index){
   setup_completer()
   
   # Load reference KEGG list
-  keggs <- colnames(completer_traits)[-1]
+  keggs <- tibble(kegg=colnames(completer_traits)[-1])
     
   if(!missing(genome_index)){
     

@@ -1,4 +1,10 @@
-# CompleteR
+
+  ██████╗ ██████╗ ███╗   ███╗██████╗ ██╗     ███████╗████████╗███████╗██████╗ 
+ ██╔════╝██╔═══██╗████╗ ████║██╔══██╗██║     ██╔════╝╚══██╔══╝██╔════╝██╔══██╗
+ ██║     ██║   ██║██╔████╔██║██████╔╝██║     █████╗     ██║   █████╗  ██████╔╝
+ ██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║     ██╔══╝     ██║   ██╔══╝  ██╔══██╗
+ ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ███████╗███████╗   ██║   ███████╗██║  ██║
+  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚══════╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
 
 R package for correcting completeness biases in metagenome-assembled genome functional inference.
 
@@ -32,6 +38,7 @@ Prepare the trait table and run the imputation.
 Taxonomic annotation of bacterial genomes using GTDB-tk yields a phylogenetic tree including your target genomes as well as a number of reference genomes from the GTDB database. This tree is used as the link between the reference tree use by **CompleteR** for phylogenetic inference and your target genomes.
 
 ```r
+library(phyloseq)
 lizard_tree <- read_tree("tests/lizards/gtdbtk.backbone.bac120.classify.tree")
 ```
 

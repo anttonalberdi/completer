@@ -26,7 +26,6 @@ setup_completer <- function(){
       }
   }
   
-  
 }
 
   
