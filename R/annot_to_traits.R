@@ -10,9 +10,12 @@
 
 annot_to_traits <- function(annot, genome_index, kegg_index){
   
-  # Load reference KEGG list
-  keggs <- read_tsv("data/kegg.txt", show_col_types = FALSE, col_names="kegg")
+  # Load references if needed
+  setup_completer()
   
+  # Load reference KEGG list
+  keggs <- colnames(completer_traits)[-1]
+    
   if(!missing(genome_index)){
     
     # Split by genome

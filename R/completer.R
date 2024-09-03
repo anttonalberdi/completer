@@ -16,6 +16,9 @@
 
 completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0.90, maxref=15000){
   
+  # Load references if needed
+  setup_completer()
+  
   ######
   # Handle tree
   ######
@@ -48,7 +51,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   user_tree$tip.label <- str_remove(user_tree$tip.label, "^GB_|^RS_")
   
   # Get reference genomes
-  reference_genomes <- scan("data/reference_genomes.txt", character(), quote = "", quiet=TRUE)
+  reference_genomes <- completer_genomes
   tip_labels_in_reference <- user_tree$tip.label[user_tree$tip.label %in% reference_genomes]
   
   # Reduce references to 10,000 or the value indicated in maxref
@@ -78,7 +81,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   # GTDB traits
   if (!exists("reference_traits")) {
     message("   Loading reference traits...")
-    reference_traits <- read_tsv("data/reference_kegg.tsv.xz", show_col_types = FALSE)
+    reference_traits <- completer_traits
   }
   
   # Combine traits
@@ -106,7 +109,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   ######
   
   # Load reference tree
-  reference_tree <- read_tree("data/reference_tree.tre")
+  reference_tree <- completer_tree
   
   #Update GTDB traits 
   reference_traits <- reference_traits %>% 

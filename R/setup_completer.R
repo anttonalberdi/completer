@@ -4,12 +4,29 @@
 #' @export
 
 setup_completer <- function(){
-  message("Downloading 5.6GBs of reference data.")
-  message(" This will take a while...")
+  
+  # Detect reference data
   data_path <- file.path(system.file("exdata", package = "completer"), "completer_v1.RData")
-  curl::curl_download("https://sid.erda.dk/share_redirect/H9VSThONVr/data.RData",data_path, quiet = FALSE)
-  message(" Download finished succesfully. Loading objects to environment.")
-  load(data_path, envir = .GlobalEnv)
+  
+  if (!file.exists(data_path)) {
+      # Download and load reference data if does not exist.
+      message("Downloading 5.6GBs of reference data.")
+      message(" This will take a while...")
+      curl::curl_download("https://sid.erda.dk/share_redirect/H9VSThONVr/data.RData",data_path, quiet = FALSE)
+      message(" Download finished succesfully. Loading objects to environment.")
+      load(data_path, envir = .GlobalEnv)
+  }else{
+      # List required objects
+      reference_data <- c("completer_genomes", "completer_tree", "completer_traits", "completer_distances")
+      missing_objects <- sapply(reference_data, function(obj) !exists(obj))
+      if (any(missing_objects)) {
+          # Load reference data if not already loaded.
+          message("Loading reference data...")
+          load(data_path, envir = .GlobalEnv)
+      }
+  }
+  
+  
 }
 
   
