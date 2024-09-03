@@ -150,3 +150,12 @@ The attribute `statistics` yields the a table with statistics of the imputation.
  9 Sg1bin_000003   GCF_9001785251     0.21 0.407       0.537
 10 fecesbin_000066 GCF_9001785251     0.22 0.407       0.53
 ```
+
+
+```r
+cat_tree <- read_tree("tests/cats/gtdbtk.bac120.classify.tree")
+cat_annotations <- read_tsv("tests/cats/annotations.tsv.xz")
+cat_traits <- annot_to_traits(annot=cat_annotations,genome_index=2,kegg_index=9)
+cat_imputed <- completer(traits = cat_traits, tree = cat_tree)
+
+```

@@ -50,7 +50,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   # Handle traits
   ######
   
-  # User-inputed traits
+  # User-imputed traits
   #user_traits <- lizard_traits[1,]
   user_traits <- traits
   
