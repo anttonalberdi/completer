@@ -4,7 +4,7 @@
 \alias{completer}
 \title{Imputes gene annotations to incomplete genomes based on phylogenetic signal.}
 \usage{
-completer(traits, tree, focal_genomes, span = 100, power = 2, threshold = 0.9)
+completer(traits, tree, focal_genomes, span = 50, power = 3, threshold = 0.9)
 }
 \arguments{
 \item{traits}{Table containing presence/absence information of gene annotations (columns) across genomes (rows).}
