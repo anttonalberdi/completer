@@ -14,7 +14,7 @@
 #' completer(genome_traits,tree)
 #' @export
 
-completer2 <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0.90, maxref=15000){
+completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0.90, maxref=15000){
   
   # Load references if needed
   setup_completer()
