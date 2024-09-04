@@ -2,11 +2,10 @@
 
 export(annot_to_traits)
 export(completer)
-export(distances_tree)
 export(getfocaltree)
-export(impsens)
 export(imputer)
 export(incompleter)
+export(recovery)
 export(references_tree)
 export(setup_completer)
 import(tidyverse)

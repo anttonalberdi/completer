@@ -79,10 +79,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
     filter(genome %in% focal_genomes)
   
   # GTDB traits
-  if (!exists("reference_traits")) {
-    message("   Loading reference traits...")
-    reference_traits <- completer_traits
-  }
+  reference_traits <- completer_traits
   
   # Combine traits
   traits <- bind_rows(user_traits,reference_traits)
@@ -118,17 +115,18 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   # Prune reference tree
   reference_tree <- keep.tip(reference_tree,tip=reference_traits$genome)
   
-  # Calculate tip distances of user tree
+  # Find closest reference genomes and distances
   closest_references <- references_tree(focal_genomes,user_tree,reference_tree)
-  
-  # Distance to closest reference
-  closest_reference_distances <- distances_tree(focal_genomes,user_tree,reference_tree)
+    #Name
+    closest_reference_names <- closest_references$genomes
+    #Distance
+    closest_reference_distances <- closest_references$distances
   
   # Collect distances to closest reference
-  reference_distance <- tibble(genome=focal_genomes,reference=closest_references,distance=round(closest_reference_distances,2))
+  reference_distance <- tibble(genome=focal_genomes,reference=closest_reference_names,distance=round(closest_reference_distances,2))
   
   #Merge target and reference focal genomes
-  focal_genomes2 <- tibble(target=focal_genomes,reference=closest_references) %>% 
+  focal_genomes2 <- tibble(target=focal_genomes,reference=closest_reference_names) %>% 
     pmap(~ list(target = .x, reference = .y))
   
   # Calculate pairwise cophenetic distances between all tree tips
@@ -138,7 +136,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   
   # Generate a list of focal trees (one per focal genome)
   message("   Generating focal trees...")
-  focaltrees <- purrr::map(closest_references, ~getfocaltree(focal_tip = .x, 
+  focaltrees <- purrr::map(closest_reference_names, ~getfocaltree(focal_tip = .x, 
                                               tip_distances = tip_distances, 
                                               tree = reference_tree, 
                                               span = span, 
@@ -186,11 +184,11 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   
   # Generate imputation sensitivity estimates based on existing presences
   # i.e., percentage of presences recovered successfully in the imputation before the presence allocation
-  sensitivity <- focalimput %>%
+  recovery <- focalimput %>%
     map2_dfr(names(focalimput), ~ {
       tibble(
         genome = .y,
-        sensitivity = round(impsens(.x),3)
+        recovery = round(recovery(.x),3)
       )
     })
   

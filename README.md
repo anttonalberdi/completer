@@ -15,9 +15,9 @@ install_github("anttonalberdi/completer")
 library(completer)
 ```
 
-### Prepare reference data
+### Download reference data
 
-Preparation of reference data entails generating some major one-time calculations to speed up future analyses. This step requires a few minutes and large amounts of memory, so be patient.
+**CompleteR** relies on some pre-computed data for rapidly imputing functions to incomplete genomes. The function `setup_completer()` automatically download the reference data (493 MBs) from a repository and loads it to the working environment.
 
 ```r
 setup_completer()
