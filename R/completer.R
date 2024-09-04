@@ -182,7 +182,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
       )
     })
   
-  # Generate imputation sensitivity estimates based on existing presences
+  # Generate imputation recovery estimates based on existing presences
   # i.e., percentage of presences recovered successfully in the imputation before the presence allocation
   recovery <- focalimput %>%
     map2_dfr(names(focalimput), ~ {
@@ -206,7 +206,7 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   # Merge statistics
   statistics <- reference_distance %>% 
     left_join(focaltree_scope,by="genome") %>% 
-    left_join(sensitivity,by="genome")
+    left_join(recovery,by="genome")
   
   message("   Imputation succesfully finished.")
   
