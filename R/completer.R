@@ -14,7 +14,7 @@
 #' completer(genome_traits,tree)
 #' @export
 
-completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0.90, maxref=15000){
+completer2 <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0.90, maxref=15000){
   
   # Load references if needed
   setup_completer()
@@ -142,20 +142,21 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
                                               span = span, 
                                               power = power))
   
-
   # If number of focal genomes is >25, run first genome to calculate expected time
   if(length(focal_genomes)>25){
+    
       elapsed_seconds <- system.time({
-        focalimput_test <- purrr::map2(focaltrees[1], focal_genomes2[1], ~imputer(traits = traits,
-                                                                                  focaltree = .x, 
-                                                                                  focal_genome = .y, 
-                                                                                  span = span, 
-                                                                                  power = power,
-                                                                                  threshold = threshold)) %>%
-          set_names(focal_genomes)
+        focalimput_test <- imputer(traits = traits,
+                           focaltree = focaltrees[[1]], 
+                           focal_genome = focal_genomes2[[1]], 
+                           span = span, 
+                           power = power,
+                           threshold = threshold)
       })
-      minutes <- floor(elapsed_seconds / 60)
-      seconds <- round(elapsed_seconds %% 60) 
+      
+      estimated_seconds<- as.numeric(elapsed_seconds["elapsed"]) * length(focal_genomes)
+      minutes <- floor(estimated_seconds / 60)
+      seconds <- round(estimated_seconds %% 60)
   }
 
   # Generate imputation across focal genomes using the focal trees
