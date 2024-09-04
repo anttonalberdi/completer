@@ -145,9 +145,28 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
                                               power = power))
   
 
-  
+  # If number of focal genomes is >25, run first genome to calculate expected time
+  if(length(focal_genomes)>25){
+      elapsed_seconds <- system.time({
+        focalimput_test <- purrr::map2(focaltrees[1], focal_genomes2[1], ~imputer(traits = traits,
+                                                                                  focaltree = .x, 
+                                                                                  focal_genome = .y, 
+                                                                                  span = span, 
+                                                                                  power = power,
+                                                                                  threshold = threshold)) %>%
+          set_names(focal_genomes)
+      })
+      minutes <- floor(elapsed_seconds / 60)
+      seconds <- round(elapsed_seconds %% 60) 
+  }
+
   # Generate imputation across focal genomes using the focal trees
-  message("   Conducting local imputation...")
+  message(str_c("   Conducting local imputation for ",length(focal_genomes)," genomes..."))
+  if(length(focal_genomes)>25){
+    message("     Be patient, please. Operation is expected to")
+    message(str_c("     be completed in ",minutes,":",seconds," minutes."))
+    }
+  
   focalimput <- purrr::map2(focaltrees, focal_genomes2, ~imputer(traits = traits,
                                          focaltree = .x, 
                                          focal_genome = .y, 
@@ -190,6 +209,8 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
   statistics <- reference_distance %>% 
     left_join(focaltree_scope,by="genome") %>% 
     left_join(sensitivity,by="genome")
+  
+  message("   Imputation succesfully finished.")
   
   # Generate final object
   return(list(imputation=result,statistics=statistics))

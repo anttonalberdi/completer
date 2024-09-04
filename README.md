@@ -54,6 +54,7 @@ Unrooted; includes branch lengths.
 Any tabular format annotation file containing the annotations of interest, such as KEGG orthologs, Pfams or CAZYs. The annotation file might contain data from a single or multiple genomes.
 
 ```r
+library(tidyverse)
 lizard_annotations <- read_tsv("tests/lizards/annotations.tsv.xz")
 ```
 
