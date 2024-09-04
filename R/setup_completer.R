@@ -10,9 +10,9 @@ setup_completer <- function(){
   
   if (!file.exists(data_path)) {
       # Download and load reference data if does not exist.
-      message("Downloading 5.6GBs of reference data.")
+      message("Downloading 493.4 MBs of reference data.")
       message(" This will take a while...")
-      curl::curl_download("https://sid.erda.dk/share_redirect/H9VSThONVr/data.RData",data_path, quiet = FALSE)
+      curl::curl_download("https://sid.erda.dk/share_redirect/H9VSThONVr/completer_v1.RData",data_path, quiet = FALSE)
       message(" Download finished succesfully. Loading objects to environment.")
       load(data_path, envir = .GlobalEnv)
   }else{
