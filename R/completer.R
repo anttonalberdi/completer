@@ -155,15 +155,17 @@ completer <- function(traits, tree, focal_genomes, span=50, power=3, threshold=0
       })
       
       estimated_seconds<- as.numeric(elapsed_seconds["elapsed"]) * length(focal_genomes)
-      minutes <- floor(estimated_seconds / 60)
-      seconds <- round(estimated_seconds %% 60)
+      
+      hours <- floor(estimated_seconds / 3600)
+      remaining_seconds <- estimated_seconds %% 3600 
+      minutes <- floor(remaining_seconds / 60)   
   }
 
   # Generate imputation across focal genomes using the focal trees
   message(str_c("   Conducting local imputation for ",length(focal_genomes)," genomes..."))
   if(length(focal_genomes)>25){
     message("     Be patient, please. Operation is expected to")
-    message(str_c("     be completed in ",minutes,":",seconds," minutes."))
+    message(str_c("     be completed in about ",hours,":",minutes," hours."))
     }
   
   focalimput <- purrr::map2(focaltrees, focal_genomes2, ~imputer(traits = traits,

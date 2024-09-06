@@ -13,7 +13,7 @@
 #' completer(genome_traits,tree)
 #' @export
 
-incompleter <- function(annotation, genome_index, contig_index, gene_index, completeness, iter=1){
+incompleter <- function(annotation, genome_index, gene_index, contig_index, completeness, iter=1){
   
   if(missing(genome_index)){
     stop("You need to specify the column number of genome identities")
@@ -24,39 +24,28 @@ incompleter <- function(annotation, genome_index, contig_index, gene_index, comp
   }
   
   if(missing(contig_index) & missing(gene_index)){
-    stop("You need to specify the column number of either contig or gene identities")
-  }
-  
-  if(!missing(contig_index) & !missing(gene_index)){
-    warning("Column numbers for both contig or gene identities have been provided.")
-    message(str_c("  Genome annotations will be reduced to ",completeness,"% based on contigs."))
-    warning("  If you prefer to transform annotations based on genes, then remove contig_index argument")
-    
-    # Get original column names
-    original_names <- colnames(annotation)[c(genome_index,contig_index)]
-    
-    # Rename annotation table
-    annotation2 <- annotation %>% 
-      rename_at(vars(all_of(c(genome_index, contig_index))), ~ c("genome", "contig")) 
-    
-    # Set transformation type
-    type="contig"
+    stop("You need to specify the column number of at least gene identities")
   }
   
   if(!missing(contig_index) & missing(gene_index)){
-    message(str_c("Genome annotations will be reduced to ",completeness,"% based on contigs."))
-    
+    stop("You must the column number of gene identities.")
+  }
+  
+  if(!missing(contig_index) & !missing(gene_index)){
+    message(str_c("  Genome annotations will be reduced to ",completeness,"% based on contigs."))
+
     # Get original column names
-    original_names <- colnames(annotation)[c(genome_index,contig_index)]
+    original_names <- colnames(annotation)[c(genome_index,contig_index,gene_index)]
     
     # Rename annotation table
     annotation2 <- annotation %>% 
-      rename_at(vars(all_of(c(genome_index, contig_index))), ~ c("genome", "contig")) 
+      rename_at(vars(all_of(c(genome_index, contig_index, gene_index))), ~ c("genome", "contig", "gene")) 
     
     # Set transformation type
     type="contig"
   }
   
+
   if(missing(contig_index) & !missing(gene_index)){
     message(str_c("Genome annotations will be reduced to ",completeness,"% based on genes"))
     
@@ -84,18 +73,23 @@ incompleter <- function(annotation, genome_index, contig_index, gene_index, comp
     }
     
     if(type == "contig"){
-      incomplete <- annotation2 %>% 
+      incomplete <- annotation2 %>%
         group_by(genome) %>%
-        mutate(complete = n_distinct(contig)) %>%
-        mutate(incomplete=round(complete * completeness / 100, 0)) %>% 
-      group_by(genome, contig) %>%
-        sample_frac(1) %>%
-        mutate(contig_rank = row_number()) %>%
+        mutate(complete = n_distinct(contig)) %>%                        # Count distinct contigs per genome
+        mutate(incomplete = round(complete * completeness / 100, 0)) %>% # Calculate 'incomplete' based on completeness percentage
+        ungroup() %>%
+        group_by(genome) %>%
+        mutate(contig = as.factor(contig)) %>%                           # Ensure contigs are treated as factors
+        distinct(genome, contig,incomplete) %>%                                     # Keep only distinct contigs for ranking
+        slice_sample(prop = 1) %>%                                       # Shuffle the contigs
+        mutate(contig_rank = row_number()) %>%                           # Assign rank after shuffling
+        right_join(annotation2, by = c("genome", "contig")) %>%          # Join the ranked contigs back to the original data
         ungroup() %>%
         filter(contig_rank <= incomplete) %>%
-        select(-c(complete,incomplete)) %>%
-        rename_at(vars(all_of(c(genome_index, contig_index))), ~ original_names) 
-      
+        select(-c(incomplete,contig_rank)) %>%
+        select(genome, contig, gene, everything()) %>% 
+        rename_at(vars(c(genome, contig, gene)), ~ original_names) 
+  
       incomplete_list[[i]] <- incomplete
     }
     
@@ -104,14 +98,15 @@ incompleter <- function(annotation, genome_index, contig_index, gene_index, comp
       incomplete <- annotation2 %>% 
         group_by(genome) %>%
         mutate(complete = n_distinct(gene)) %>%
-        mutate(incomplete=round(complete * completeness / 100, 0))
-      group_by(genome, gene) %>%
-        sample_frac(1) %>%
+        mutate(incomplete=round(complete * completeness / 100, 0)) %>% 
+        group_by(genome) %>%
+        slice_sample(prop=1) %>%
         mutate(gene_rank = row_number()) %>%
         ungroup() %>%
         filter(gene_rank <= incomplete) %>%
-        select(-c(complete,incomplete)) %>%
-        rename_at(vars(all_of(c(gene_index, contig_index))), ~ original_names) 
+        select(-c(complete,incomplete,gene_rank)) %>%
+        select(genome, gene, everything()) %>% 
+        rename_at(vars(c(genome, gene)), ~ original_names) 
       
       incomplete_list[[i]] <- incomplete
     }
